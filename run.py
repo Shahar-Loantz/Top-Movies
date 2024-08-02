@@ -20,3 +20,4 @@ if __name__ == '__main__':
         scraper_logger.error(f"An error occurred during scraping: {e}")
         scraper_logger.exception(e)
   
+############################
