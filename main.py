@@ -1,71 +1,41 @@
-from fastapi import FastAPI, Query, HTTPException
+# main.py
+
+from fastapi import FastAPI, HTTPException
 from typing import List, Optional
 import json
-from pydantic import BaseModel
+import os
+from models import MovieQuery
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the FastAPI application!"}
+# Path to the JSON data file
+DATA_FILE_PATH = os.path.join('data', 'movies.json')
 
-# Load the movies data from the JSON file
-def load_movies_data():  
+# Function to load data from the JSON file
+def load_data():
     try:
-        with open('data/movies.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
+        with open(DATA_FILE_PATH, 'r', encoding='utf-8') as file:
+            return json.load(file)
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Movies data not found")
+        raise HTTPException(status_code=404, detail="Data file not found")
 
-movies_data = load_movies_data()
+@app.post("/movies/")
+def get_movies(query: MovieQuery):
+    movies = load_data()
 
-# Define a Pydantic model for the movie
-class Movie(BaseModel):
-    name: Optional[str] = None
-    actors: Optional[str] = None
-    rank: Optional[int] = None
-    description: Optional[str] = None
-    featured_review: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
-
-@app.get("/movies/", response_model=List[Movie])
-def get_movies(
-    name: Optional[str] = Query(None),
-    actors: Optional[str] = Query(None),
-    rank: Optional[int] = Query(None),
-    description: Optional[str] = Query(None),
-    featured_review: Optional[str] = Query(None),
-    fields: Optional[List[str]] = Query(None)
-):
-    filtered_movies = []
-    
-    for movie in movies_data:
-        if name and name.lower() not in movie.get('name', '').lower():
-            continue
-        if actors and actors.lower() not in movie.get('actors', '').lower():
-            continue
-        if rank and rank != movie.get('rank'):
-            continue
-        if description and description.lower() not in movie.get('description', '').lower():
-            continue
-        if featured_review and featured_review.lower() not in movie.get('featured_review', '').lower():
-            continue
-        
-        if fields:
-            filtered_movie = {field: movie.get(field) for field in fields if field in movie}
+    if query.fields:
+        filtered_movies = []
+        for movie in movies:
+            filtered_movie = {field: movie.get(field) for field in query.fields if field in movie}
             filtered_movies.append(filtered_movie)
-        else:
-            filtered_movies.append(movie)
-    
-    return filtered_movies
+        movies = filtered_movies
+
+    if query.search_field and query.search_value:
+        movies = [movie for movie in movies if query.search_field in movie and query.search_value.lower() in str(movie[query.search_field]).lower()]
+
+    return movies
 
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the FastAPI application!"}
-
-# Run the application
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    return {"message": "Welcome to the Movie API! Use POST /movies/ to query movie data."}
