@@ -5,25 +5,32 @@
 This project is a FastAPI application that retrieves data from the IMDB Top 250 Movies list. Users can query the data with specific fields and perform searches within those fields.
 
 ## Project Structure
-
+<br />
 project-root/<br />
 │<br />
 ├── data/<br />
-│ ├── movies.json # Contains scraped movie data<br />
-│ └── movies.csv # Contains scraped movie data in CSV format<br />
+│   ├── movies.json<br />
+│   └── movies.csv<br />
+│<br />
+├── logs/<br />
+│   └── scrape.log<br />
+│   └── app.log<br />
 │<br />
 ├── scraper/<br />
-│ ├── init.py<br />
-│ ├── scrape.py # Script to scrape movie data from IMDB<br />
-│ ├── movie_details.py # Module to fetch movie details<br />
-│ ├── data_handler.py # Module to save data to JSON and CSV<br />
-│ └── logger.py # Logging configuration<br />
+│   ├── __init__.py<br />
+│   ├── scrape.py<br />
+│   ├── movie_details.py<br />
+│   ├── data_handler.py<br />
+│   └── logger.py<br />
 │<br />
-├── main.py # FastAPI application<br />
-├── models.py # Pydantic models for request validation<br />
-├── requirements.txt # List of project dependencies<br />
-├── .gitignore # Git ignore file<br />
-└── README.md # Project documentation<br />
+├── tests/<br />
+│   └── test_main.py<br />
+│<br />
+├── main.py<br />
+├── models.py<br />
+├── requirements.txt<br />
+├── .gitignore<br />
+└── README.md<br />
 
 ## Installation
 
@@ -77,39 +84,32 @@ The application will be available at http://127.0.0.1:8000/.
 
   **Request Body Example:**<br />
   {<br />
-    "fields": ["name", "actors", "rank", "description", "featured_review", "created_at", "updated_at"],<br />
-    "search_field": "actors",<br />
-    "search_value": "Peter"<br />
+  "fields": ["name", "actors", "rank", "description", "featured_review", "created_at", "updated_at"],<br />
+  "search_criteria": {<br />
+    "name": "Godfather",<br />
+    "actors": "Francis"<br />
   }<br />
+}<br />
 
   **Response Example:**<br />
-  [<br />
+[<br />
     {<br />
-        "name": "7. The Lord of the Rings: The Return of the King",<br />
-        "actors": "Peter Jackson, J.R.R. Tolkien, Fran Walsh, Philippa Boyens, Elijah Wood",<br />
-        "rank": 7,<br />
-        "description": "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",<br />
+        "name": "2. The Godfather",<br />
+        "actors": "Francis Ford Coppola, Mario Puzo, Francis Ford Coppola, Marlon Brando, Al Pacino",<br />
+        "rank": 2,<br />
+        "description": "Don Vito Corleone, head of a mafia family, decides to hand over his empire to his youngest son, Michael. However, his decision unintentionally puts the lives of his loved ones in grave danger.",<br />
         "featured_review": "N/A",<br />
-        "created_at": "2024-08-03T20:45:27.036514",<br />
-        "updated_at": "2024-08-03T20:45:27.036516"<br />
+        "created_at": "2024-08-04T14:29:13.432423",<br />
+        "updated_at": "2024-08-04T14:29:13.432426"<br />
     },<br />
     {<br />
-        "name": "9. The Lord of the Rings: The Fellowship of the Ring",<br />
-        "actors": "Peter Jackson, J.R.R. Tolkien, Fran Walsh, Philippa Boyens, Elijah Wood",<br />
-        "rank": 9,<br />
-        "description": "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",<br />
+        "name": "4. The Godfather Part II",<br />
+        "actors": "Francis Ford Coppola, Francis Ford Coppola, Mario Puzo, Al Pacino, Robert De Niro",<br />
+        "rank": 4,<br />
+        "description": "The early life and career of Vito Corleone in 1920s New York City is portrayed, while his son, Michael, expands and tightens his grip on the family crime syndicate.",<br />
         "featured_review": "N/A",<br />
-        "created_at": "2024-08-03T20:45:30.760104",<br />
-        "updated_at": "2024-08-03T20:45:30.760107"<br />
-    },<br />
-    {<br />
-        "name": "12. The Lord of the Rings: The Two Towers",<br />
-        "actors": "Peter Jackson, J.R.R. Tolkien, Fran Walsh, Philippa Boyens, Elijah Wood",<br />
-        "rank": 12,<br />
-        "description": "While Frodo and Sam edge closer to Mordor with the help of the shifty Gollum, the divided fellowship makes a stand against Sauron's new ally, Saruman, and his hordes of Isengard.",<br />
-        "featured_review": "N/A",<br />
-        "created_at": "2024-08-03T20:45:37.678552",<br />
-        "updated_at": "2024-08-03T20:45:37.678555"<br />
+        "created_at": "2024-08-04T14:29:16.063882",<br />
+        "updated_at": "2024-08-04T14:29:16.063885"<br />
     }<br />
 ]<br />
 
